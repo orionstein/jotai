@@ -25,3 +25,7 @@ export const getScopeContext = (scope?: Scope) => {
   }
   return ScopeContextMap.get(scope) as ScopeContext
 }
+
+export const hasScopeContext = (scope?: Scope) => {
+  return !ScopeContextMap.has(scope)
+}

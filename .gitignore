@@ -6,10 +6,6 @@ node_modules
 # testing
 coverage
 
-# production
-dist
-build
-
 # dotenv environment variables file
 .env
 .env.local

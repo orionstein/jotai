@@ -1,12 +1,14 @@
+import { create } from 'stream-lite'
 import {
   useCallback,
   useContext,
   useDebugValue,
   useEffect,
   useReducer,
+  useState,
 } from 'react'
 import type { Atom, Scope, SetAtom, WritableAtom } from './atom'
-import { getScopeContext } from './contexts'
+import { getScopeContext, hasScopeContext } from './contexts'
 import { COMMIT_ATOM, READ_ATOM, SUBSCRIBE_ATOM, WRITE_ATOM } from './store'
 
 const isWritable = <Value, Update>(
@@ -97,4 +99,35 @@ export function useAtom<Value, Update>(
 
   useDebugValue(value)
   return [value, setAtom]
+}
+
+export function subscribeToAtom<Value, Update>(
+  atom: Atom<Value> | WritableAtom<Value, Update>,
+  scope?: Scope
+) {
+  if ('scope' in atom) {
+    console.warn(
+      'atom.scope is deprecated. Please do useAtom(atom, scope) instead.'
+    )
+    scope = (atom as { scope: Scope }).scope
+  }
+
+  let [outstream, setOutstream] = useState()
+
+  if (!hasScopeContext(scope)) {
+    setOutstream(create())
+  }
+
+  const ScopeContext = getScopeContext(scope)
+  const store = useContext(ScopeContext).s
+
+  useEffect(() => {
+    const unsubscribe = store[SUBSCRIBE_ATOM](atom, (data) => {
+      outstream.next(data)
+    })
+    forceUpdate()
+    return unsubscribe
+  }, [store, atom, outstream])
+
+  return outstream
 }

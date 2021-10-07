@@ -3,8 +3,8 @@
   "private": true,
   "version": "1.3.8",
   "description": "👻 Next gen state management that will spook you",
-  "main": "./index.js",
-  "types": "./index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "typesVersions": {
     "<4.0": {
       "esm/*": [
@@ -279,5 +279,8 @@
     "xstate": {
       "optional": true
     }
+  },
+  "dependencies": {
+    "stream-lite": "^4.0.0"
   }
 }
